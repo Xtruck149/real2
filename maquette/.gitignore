@@ -5,3 +5,5 @@ next-env.d.ts
 *.tsbuildinfo
 .env*.local
 verify-output/
+# Vercel project link (local, never committed)
+.vercel

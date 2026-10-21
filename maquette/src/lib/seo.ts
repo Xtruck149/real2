@@ -31,10 +31,12 @@ export function organizationJsonLd() {
     name: site.name,
     description: site.description,
     url: siteUrl,
-    image: `${siteUrl}/images/hero.webp`,
+    // The shipped visuals are illustrations: they are advertised as the restaurant's image only once real photos replace them.
+    image: isDemo ? undefined : `${siteUrl}/images/hero.webp`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: c.address.status === "demo" ? undefined : c.address.value,
+      // A "public" address is a lead from a directory, not a confirmed fact: only confirmed values are published.
+      streetAddress: confirmed(c.address, c.address.value),
       addressLocality: site.locality,
       addressRegion: site.district,
       addressCountry: "CI",

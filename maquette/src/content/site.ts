@@ -48,11 +48,11 @@ export const copy = {
   introText:
     "Cette maquette imagine comment Chez Thia pourrait mettre en valeur ses spécialités. Les textes et visuels sont des exemples à remplacer par les contenus fournis par le restaurant.",
   highlights: [
-    { title: "Fruits de mer", text: "Selon l'arrivage, à découvrir dans la carte et auprès de l'équipe." },
-    { title: "Grillades", text: "Poissons et viandes à la braise, accompagnements ivoiriens." },
-    { title: "Soupe bassamoise", text: "Une spécialité de la côte, à faire décrire par le restaurant." },
+    { title: "Fruits de mer", text: "Citée par la fiche publique du restaurant ; plats et disponibilité à préciser avec l'équipe." },
+    { title: "Grillades", text: "Citée par la fiche publique ; la sélection réelle et les accompagnements restent à confirmer." },
+    { title: "Soupe bassamoise", text: "Une spécialité de la côte, mise en avant par la fiche publique ; recette à faire décrire par le restaurant." },
   ],
   reservationIntro:
-    "Réservez une table ou décrivez votre événement (anniversaire, repas d'entreprise, famille). L'équipe vous recontacte pour confirmer : rien n'est définitif avant cette confirmation.",
+    "Réservez une table ou décrivez votre événement (anniversaire, repas d'entreprise, famille). Dans la version finale, l'équipe vous recontactera pour confirmer : rien ne sera définitif avant cette confirmation.",
   reservationIncludesEvents: true,
 };

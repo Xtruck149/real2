@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { validate, type FieldErrors, type FormKind } from "@/lib/forms";
+import { isDemo } from "@/lib/env";
 
 type State = "idle" | "submitting" | "success" | "error";
 
@@ -33,6 +34,8 @@ export function FormShell({ kind, title, submitLabel, successTitle, successText,
   const [state, setState] = useState<State>("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [reference, setReference] = useState("");
+  // The server states whether the request was only acknowledged ("demo"): the wording follows it, never the other way round.
+  const [demoReply, setDemoReply] = useState(true);
   const summaryRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +66,7 @@ export function FormShell({ kind, title, submitLabel, successTitle, successText,
       if (res.status === 422 && body.errors) return showErrors(body.errors);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setReference(body.reference ?? "");
+      setDemoReply(body.mode !== "live");
       setState("success");
       form.reset();
       requestAnimationFrame(() => successRef.current?.focus());
@@ -74,17 +78,21 @@ export function FormShell({ kind, title, submitLabel, successTitle, successText,
   if (state === "success") {
     return (
       <div ref={successRef} tabIndex={-1} data-state="success" role="status" className="card p-6 md:p-8">
-        <p className="eyebrow">Demande envoyée</p>
-        <h3 className="mt-2 text-3xl">{successTitle}</h3>
-        <p className="mt-3 text-muted">{successText}</p>
+        <p className="eyebrow">{demoReply ? "Démonstration" : "Demande envoyée"}</p>
+        <h3 className="mt-2 text-3xl">{demoReply ? "Parcours terminé : rien n’a été envoyé." : successTitle}</h3>
+        {demoReply ? (
+          <p className="mt-3 text-muted">
+            Aucune donnée n&apos;a été transmise au restaurant ni enregistrée, et aucune réservation n&apos;existe. Voici ce qui se
+            passera dans la version finale : {successText}
+          </p>
+        ) : (
+          <p className="mt-3 text-muted">{successText}</p>
+        )}
         {reference ? (
           <p className="mt-4 text-sm">
-            Référence : <strong className="font-mono">{reference}</strong>
+            {demoReply ? "Référence de démonstration" : "Référence"} : <strong className="font-mono">{reference}</strong>
           </p>
         ) : null}
-        <p className="mt-4 rounded-xl border border-line p-3 text-sm text-muted">
-          Démonstration : aucune donnée n&apos;a été transmise à l&apos;établissement ni enregistrée.
-        </p>
         <button type="button" className="btn btn-ghost mt-6" onClick={() => setState("idle")}>
           Faire une autre demande
         </button>
@@ -134,7 +142,14 @@ export function FormShell({ kind, title, submitLabel, successTitle, successText,
           </label>
         </div>
 
-        <button type="submit" className="btn btn-primary mt-8 w-full sm:w-auto" disabled={state === "submitting"} aria-busy={state === "submitting"}>
+        {isDemo ? (
+          <p data-testid="demo-form-note" className="mt-8 rounded-xl border border-line bg-surface-2/60 p-3 text-sm text-muted">
+            <strong className="text-ink">Démonstration :</strong> en envoyant ce formulaire, vous testez le parcours. Rien n&apos;est transmis au
+            restaurant et rien n&apos;est enregistré.
+          </p>
+        ) : null}
+
+        <button type="submit" className={`btn btn-primary w-full sm:w-auto ${isDemo ? "mt-4" : "mt-8"}`} disabled={state === "submitting"} aria-busy={state === "submitting"}>
           {state === "submitting" ? (
             <>
               <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

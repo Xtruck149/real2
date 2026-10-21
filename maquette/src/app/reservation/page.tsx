@@ -3,6 +3,7 @@ import { FactBadge } from "@/components/FactBadge";
 import { PageHeader } from "@/components/PageHeader";
 import { EventForm, ReservationForm } from "@/components/forms/RestaurantForms";
 import { copy, site } from "@/content/site";
+import { isDemo } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
@@ -59,14 +60,25 @@ export default function ReservationPage() {
               ))}
             </ul>
           </div>
-          <div className="card p-6">
-            <h3 className="text-xl">Comment ça marche ?</h3>
-            <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted">
-              <li>Vous envoyez votre demande.</li>
-              <li>L&apos;équipe vérifie la disponibilité.</li>
-              <li>Vous recevez une confirmation par téléphone ou WhatsApp.</li>
-            </ol>
-          </div>
+          {isDemo ? (
+            <div className="card p-6" data-testid="demo-booking-note">
+              <h3 className="text-xl">En démonstration</h3>
+              <p className="mt-2 text-muted">
+                Ce formulaire montre le parcours prévu : <strong>aucune demande n&apos;est transmise</strong> au restaurant et
+                aucune réservation n&apos;est enregistrée. Le circuit réel (destinataire, délai de réponse, mode de confirmation)
+                sera défini avec {site.name}.
+              </p>
+            </div>
+          ) : (
+            <div className="card p-6">
+              <h3 className="text-xl">Comment ça marche ?</h3>
+              <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted">
+                <li>Vous envoyez votre demande.</li>
+                <li>L&apos;équipe vérifie la disponibilité.</li>
+                <li>Vous recevez une confirmation par téléphone ou WhatsApp.</li>
+              </ol>
+            </div>
+          )}
           {!copy.reservationIncludesEvents ? (
             <div className="card p-6">
               <h3 className="text-xl">Plus de 40 personnes ?</h3>

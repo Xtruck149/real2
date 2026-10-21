@@ -3,7 +3,12 @@ import type { Fact } from "@/content/types";
 /** Demo mode is the default: banner on every page and no search-engine indexing. */
 export const isDemo = process.env.NEXT_PUBLIC_SITE_MODE !== "production";
 
-export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+/**
+ * Public URL: the explicit setting wins; on Vercel the production domain assigned by the platform is used;
+ * otherwise local development. No URL is ever guessed.
+ */
+const platformHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || (platformHost ? `https://${platformHost}` : "http://localhost:3000")).replace(/\/$/, "");
 
 /**
  * The WhatsApp number comes from the environment, or from the config only once the
