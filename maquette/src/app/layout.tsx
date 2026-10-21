@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Playfair_Display } from "next/font/google";
+import { Bowlby_One, DM_Sans, Gochi_Hand } from "next/font/google";
 import { DemoBanner } from "@/components/DemoBanner";
+import { Dock } from "@/components/Dock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { QuickActions } from "@/components/QuickActions";
@@ -9,8 +10,10 @@ import { isDemo, resolveWhatsapp, siteUrl, telHref } from "@/lib/env";
 import { organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
-const display = Playfair_Display({ subsets: ["latin"], variable: "--font-display-face", display: "swap" });
-const body = Outfit({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+// Sign-painter display face, a friendly text face, and a chalk hand for the menu board.
+const display = Bowlby_One({ subsets: ["latin"], weight: "400", variable: "--font-display-face", display: "swap" });
+const body = DM_Sans({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+const chalk = Gochi_Hand({ subsets: ["latin"], weight: "400", variable: "--font-chalk-face", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -23,26 +26,26 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
 };
 
-export const viewport: Viewport = { themeColor: "#f7f1e8", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#10202e", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${body.variable}`}>
+    <html lang="fr" className={`${display.variable} ${body.variable} ${chalk.variable}`}>
       <body>
-        <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink">
+        <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:border-2 focus:border-ink focus:bg-sun focus:px-4 focus:py-2 focus:text-ink">
           Aller au contenu
         </a>
         <DemoBanner />
-        <Header name={site.name} shortName={site.shortName} nav={site.nav} cta={site.primaryCta} />
+        <Header name={site.name} cta={site.primaryCta} />
         <main id="contenu" tabIndex={-1} className="focus:outline-none">
           {children}
         </main>
         <Footer />
+        <Dock />
         <QuickActions
           whatsapp={resolveWhatsapp(site.contact.whatsapp)}
           whatsappMessage={site.contact.whatsappMessage}
           tel={telHref(site.contact.phone)}
-          cta={site.primaryCta}
           name={site.name}
         />
         {/* Static config only; "<" is escaped so content can never close the script tag. */}

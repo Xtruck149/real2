@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FactBadge } from "@/components/FactBadge";
 import { PageHeader } from "@/components/PageHeader";
+import { TableComposer } from "@/components/TableComposer";
 import { EventForm, ReservationForm } from "@/components/forms/RestaurantForms";
 import { copy, site } from "@/content/site";
 import { isDemo } from "@/lib/env";
@@ -12,27 +13,35 @@ export const metadata = pageMetadata(
   "/reservation",
 );
 
+const CHIP = "inline-flex min-h-11 items-center rounded-full border-[2.5px] border-ink bg-surface px-5 text-sm font-extrabold shadow-[3px_3px_0_var(--color-ink)] hover:bg-sun";
+
 export default function ReservationPage() {
   const h = site.contact.hours;
   return (
     <>
-      <PageHeader eyebrow="Réservation" title={copy.reservationIncludesEvents ? "Réserver une table ou un événement" : "Réserver une table"}>
+      <PageHeader eyebrow="Réservation" title={copy.reservationIncludesEvents ? "Réserver une table ou une fête" : "Réserver une table"}>
         <p>{copy.reservationIntro}</p>
       </PageHeader>
 
       {copy.reservationIncludesEvents ? (
-        <nav aria-label="Type de demande" className="container-site -mt-4 mb-8 flex flex-wrap gap-2">
-          <a href="#reservation" className="btn btn-ghost min-h-11 text-sm">
-            Table
+        <nav aria-label="Aller à" className="container-site -mt-4 mb-10 flex flex-wrap gap-3">
+          <a href="#composer" className={CHIP}>
+            Composer ma table
           </a>
-          <a href="#evenement" className="btn btn-ghost min-h-11 text-sm">
+          <a href="#reservation" className={CHIP}>
+            Réserver
+          </a>
+          <a href="#evenement" className={CHIP}>
             Événement
           </a>
         </nav>
       ) : null}
 
-      <div className="container-site grid gap-10 lg:grid-cols-[1.6fr_1fr]">
+      <div className="container-site grid gap-12 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-16">
+          <section id="composer" aria-labelledby="composer-title">
+            <TableComposer restaurant={site.name} />
+          </section>
           <section id="reservation" aria-label="Réserver une table">
             <ReservationForm restaurant={site.name} />
           </section>
@@ -43,16 +52,35 @@ export default function ReservationPage() {
           ) : null}
         </div>
 
-        <aside aria-labelledby="aside-title" className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+        <aside aria-labelledby="aside-title" className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <h2 id="aside-title" className="sr-only">
             Informations utiles
           </h2>
+          {isDemo ? (
+            <div className="card bg-sun p-6" data-testid="demo-booking-note">
+              <h3 className="text-2xl">En démonstration</h3>
+              <p className="mt-2">
+                Ce formulaire montre le parcours prévu : <strong>aucune demande n&apos;est transmise</strong> au restaurant et aucune
+                réservation n&apos;est enregistrée. Le circuit réel (destinataire, délai de réponse, mode de confirmation) sera défini avec{" "}
+                {site.name}.
+              </p>
+            </div>
+          ) : (
+            <div className="card bg-sun p-6">
+              <h3 className="text-2xl">Comment ça marche ?</h3>
+              <ol className="mt-3 list-decimal space-y-2 pl-5">
+                <li>Vous envoyez votre demande.</li>
+                <li>L&apos;équipe vérifie la disponibilité.</li>
+                <li>Vous recevez une confirmation par téléphone ou WhatsApp.</li>
+              </ol>
+            </div>
+          )}
           <div className="card p-6">
-            <h3 className="text-xl">
+            <h3 className="text-2xl">
               Horaires
               <FactBadge status={h.status} source={h.source} />
             </h3>
-            <ul className="mt-2 text-muted">
+            <ul className="mt-3 text-muted">
               {h.rows.map((r) => (
                 <li key={r.days}>
                   {r.days} : {r.hours}
@@ -60,28 +88,9 @@ export default function ReservationPage() {
               ))}
             </ul>
           </div>
-          {isDemo ? (
-            <div className="card p-6" data-testid="demo-booking-note">
-              <h3 className="text-xl">En démonstration</h3>
-              <p className="mt-2 text-muted">
-                Ce formulaire montre le parcours prévu : <strong>aucune demande n&apos;est transmise</strong> au restaurant et
-                aucune réservation n&apos;est enregistrée. Le circuit réel (destinataire, délai de réponse, mode de confirmation)
-                sera défini avec {site.name}.
-              </p>
-            </div>
-          ) : (
-            <div className="card p-6">
-              <h3 className="text-xl">Comment ça marche ?</h3>
-              <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted">
-                <li>Vous envoyez votre demande.</li>
-                <li>L&apos;équipe vérifie la disponibilité.</li>
-                <li>Vous recevez une confirmation par téléphone ou WhatsApp.</li>
-              </ol>
-            </div>
-          )}
           {!copy.reservationIncludesEvents ? (
             <div className="card p-6">
-              <h3 className="text-xl">Plus de 40 personnes ?</h3>
+              <h3 className="text-2xl">Plus de 40 personnes ?</h3>
               <p className="mt-2 text-muted">Pour une fête ou une privatisation, utilisez la demande d&apos;événement.</p>
               <Link href="/evenements" className="btn btn-ghost mt-4 min-h-11 text-sm">
                 Organiser un événement

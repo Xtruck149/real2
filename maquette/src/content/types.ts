@@ -61,8 +61,14 @@ export type MenuCategory = { id: string; name: string; intro: string; items: Men
 
 export type GalleryCategory = "plats" | "ambiance" | "evenements";
 
+/** Drawn illustrations (see components/Illustrations.tsx). Real photos replace them through `file`. */
+export type SceneName = "fruits-de-mer" | "grillades" | "soupe" | "accompagnements" | "salle" | "terrasse" | "famille" | "entreprise";
+
 export type GalleryImage = {
-  file: string;
+  /** A real, authorised photo in /public/images. When present it is shown instead of the illustration. */
+  file?: string;
+  /** Illustration shown while no authorised photo exists. */
+  scene: SceneName;
   alt: string;
   caption: string;
   category: GalleryCategory;
@@ -70,4 +76,12 @@ export type GalleryImage = {
 
 export type EventFormat = { title: string; description: string; capacity: Fact; status: FactStatus };
 
-export type Specialty = { title: string; description: string; image: string; status: FactStatus; source?: string };
+export type Specialty = {
+  title: string;
+  description: string;
+  /** Illustration used until an authorised photo (`file`) is supplied. */
+  scene: SceneName;
+  file?: string;
+  status: FactStatus;
+  source?: string;
+};

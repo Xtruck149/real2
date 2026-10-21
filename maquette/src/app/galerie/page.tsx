@@ -9,13 +9,13 @@ export const metadata = pageMetadata("Galerie", `Plats, ambiance et événements
 export default function GaleriePage() {
   return (
     <>
-      <PageHeader eyebrow="Galerie" title="Plats, ambiance, événements">
+      <PageHeader eyebrow="Galerie" title="Plats, ambiance, fêtes">
         <p>
-          Les visuels ci-dessous sont des illustrations de démonstration. Ils seront remplacés par des photographies
-          fournies ou autorisées par l&apos;établissement, optimisées automatiquement pour le mobile.
+          Les visuels ci-dessous sont des <strong>illustrations dessinées pour la démonstration</strong>, pas des photos du restaurant.
+          Elles seront remplacées par des photographies fournies ou autorisées par l&apos;établissement.
         </p>
       </PageHeader>
-      <div className="container-site">
+      <div className="container-site pb-6">
         <Gallery images={gallery} />
       </div>
     </>

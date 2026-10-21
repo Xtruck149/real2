@@ -46,6 +46,8 @@ export const reservationSchema = z.object({
   personnes: z.coerce.number({ error: "Indiquez le nombre de personnes." }).int().min(1, { error: "1 personne minimum." }).max(40, { error: "Au-delà de 40 personnes, faites une demande d'événement." }),
   occasion: z.enum(["", "anniversaire", "affaires", "romantique", "autre"]).optional().default(""),
   message: z.string().trim().max(500, { error: "500 caractères maximum." }).optional().default(""),
+  /** Dishes ticked in "Composer ma table" (names from the demo menu); free text, never trusted as a price or a stock level. */
+  selection: z.string().trim().max(400, { error: "Sélection trop longue (400 caractères maximum)." }).optional().default(""),
   consentement,
   website,
 });

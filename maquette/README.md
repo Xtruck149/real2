@@ -13,12 +13,12 @@
 
 | Route | Contenu |
 |---|---|
-| `/` | Accueil : présentation, spécialités, aperçu du menu, événements, galerie, infos pratiques |
-| `/menu` | Menu par catégories (soupes, fruits de mer, grillades…), navigation rapide par ancres |
-| `/specialites` | Page dédiée aux trois spécialités citées publiquement |
-| `/galerie` | Galerie filtrable avec visionneuse accessible (clavier, flèches, Échap) |
-| `/reservation` | Réservation de table **et** demande d'événement sur la même page |
-| `/contact` | Adresse, horaires, itinéraire Google Maps, réseaux sociaux (après vérification) |
+| `/` | Accueil en affiche : héros illustré, ruban des spécialités, « Votre table en trois gestes », affiches empilées, ardoise, collage, ticket d'infos pratiques |
+| `/menu` | **L'ardoise** : une ardoise par catégorie (soupes, fruits de mer, grillades…), navigation rapide par ancres |
+| `/specialites` | Les trois spécialités citées publiquement, en grandes affiches qui s'empilent au défilement |
+| `/galerie` | Collage filtrable avec visionneuse accessible (clavier, flèches, Échap) |
+| `/reservation` | **Composer ma table**, puis réservation de table **et** demande d'événement sur la même page |
+| `/contact` | Coordonnées sur un ticket, plan dessiné (non géolocalisé), itinéraire Google Maps, réseaux sociaux (après vérification) |
 | `/maquette` | Transparence : statut de chaque information et sources consultées |
 | `/api/demandes` | Réception des formulaires (validation serveur, aucune donnée stockée) |
 
@@ -55,7 +55,9 @@ tablette (768 px) et ordinateur (1280 px) :
 - codes HTTP 200 sur toutes les pages, 404 sur une URL inconnue, `sitemap.xml` et `robots.txt` ;
 - absence de défilement horizontal, un seul `h1` par page, images avec `alt`, boutons nommés,
   aucune erreur dans la console ;
-- menu mobile : ouverture, fermeture avec Échap, fermeture après navigation ;
+- dock de navigation : visible, 5 destinations, pas de menu hamburger, liens ≥ 44 px, page courante indiquée, bas de page
+  jamais masqué ;
+- Composer ma table : le plat coché apparaît dans « Ma table » et part avec la demande (`selection`) ;
 - chaque formulaire : erreurs à l'envoi vide (avec focus sur le récapitulatif), état de chargement,
   message de succès, message d'erreur si le serveur ne répond pas ;
 - API : refus des données invalides (422), des types inconnus, des corps JSON invalides ou inattendus (400),
@@ -87,11 +89,13 @@ Chaque information porte un statut : `"demo"`, `"public"` (avec sa source) ou `"
 Seules les informations `"confirme"` deviennent cliquables (téléphone) et apparaissent dans les
 données structurées (JSON-LD) lues par Google.
 
-**Photos** : déposer les fichiers autorisés dans `public/images/` (WebP ou JPEG), puis régénérer le
-manifeste (dimensions + aperçu flou) :
+**Visuels** : aujourd'hui ce sont des **illustrations dessinées pour Chez Thia** (`src/components/Illustrations.tsx`),
+jamais présentées comme des photos du restaurant. Quand le restaurant fournit des photos autorisées : les déposer dans
+`public/images/` (WebP ou JPEG), régénérer le manifeste (dimensions + aperçu flou), puis ajouter `file: "nom.webp"` à
+l'élément concerné dans `src/content/gallery.ts` : la photo remplace alors l'illustration, sans toucher aux composants.
 
 ```bash
-python3 scripts/images.py manifest public/images src/content/images.generated.json
+python scripts/images.py manifest public/images src/content/images.generated.json
 ```
 
 Next.js sert ensuite automatiquement des versions AVIF/WebP redimensionnées selon l'écran.
@@ -100,7 +104,8 @@ Next.js sert ensuite automatiquement des versions AVIF/WebP redimensionnées sel
 
 - **Next.js 16 (App Router) + TypeScript + Tailwind CSS 4.** Toutes les pages sont générées
   statiquement : chargement rapide, hébergement simple.
-- **JavaScript client limité** à ce qui en a besoin : menu mobile, formulaires, galerie, bouton WhatsApp.
+- **JavaScript client limité** à ce qui en a besoin : dock (page courante), Composer ma table, formulaires, galerie,
+  apparitions au défilement, bouton WhatsApp.
 - **Formulaires** : un même schéma `zod` (`src/lib/forms.ts`) valide côté navigateur et côté serveur ;
   champ piège anti-robots ; limitation de débit simple ; aucune donnée personnelle dans les journaux.
   Le texte de succès suit la réponse du serveur (`mode: "demo"`), jamais l'inverse.
@@ -108,9 +113,18 @@ Next.js sert ensuite automatiquement des versions AVIF/WebP redimensionnées sel
   par IP. Cette limitation vit en mémoire : sur un hébergement sans serveur elle est **par instance**, elle freine
   les abus ordinaires mais n'est pas une garantie ; une vraie intégration doit ajouter un stockage partagé ou le
   pare-feu de la plateforme.
-- **Identité visuelle « côte de Bassam »** : bleu pétrole, sable et terracotta ; vagues de séparation, bandeau défilant
-  des trois spécialités citées par la source publique, cadre du héros qui se balance doucement. Composants propres au
-  projet : `Appear` (apparition au défilement), `Wave`, `Ribbon`. Les apparitions ne masquent jamais le contenu
+- **Identité visuelle « l'enseigne »** (inspirée des enseignes peintes de maquis et de l'affiche Bauhaus) : aplats francs
+  bleu lagune / jaune soleil / rouge corail / vert feuille / ardoise, contours d'encre, ombres dures, lettrage peint
+  (Bowlby One + DM Sans, écriture à la craie Gochi Hand pour l'ardoise). Les couleurs de texte sont vérifiées à 4,5:1
+  (jamais d'encre ni de crème sur le corail ; blanc seulement).
+- **Navigation en « dock »** flottant (`Dock.tsx`) : barre pleine largeur sur téléphone, pastille centrée sur grand écran,
+  cinq destinations, page courante en `aria-current`, cibles ≥ 44 px, marge de bas de page garantie. Pas de menu hamburger.
+- **Composer ma table** (`TableComposer.tsx`) : cases à cocher accessibles ; un seul champ caché `selection`, relié au
+  formulaire par l'attribut `form`, accompagne la demande. Les plats sont des exemples : ni disponibilité ni prix.
+- **Illustrations** (`Illustrations.tsx`) : poisson, crevette, crabe, flamme, bol, alloco, attiéké, scènes et affiche du
+  héros, en SVG (quelques centaines d'octets chacune, nettes à toute taille, aucun droit à gérer).
+- **Mouvement** : stickers qui se balancent, ruban défilant (pause au survol/focus), affiches qui s'empilent au défilement
+  (CSS `position: sticky`, sans JavaScript) et apparitions progressives (`Appear`) qui ne masquent jamais le contenu
   (visible sans JavaScript, avec mouvement réduit, à l'impression, ou si l'observateur ne répond pas).
 - **Accessibilité** : lien d'évitement, repères ARIA, focus visible, erreurs reliées aux champs
   (`aria-invalid`, `aria-describedby`), cibles tactiles ≥ 44 px, mouvement réduit respecté.

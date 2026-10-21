@@ -25,7 +25,8 @@ export default function MaquettePage() {
       <PageHeader eyebrow="Transparence" title="À propos de cette maquette">
         <p>
           Ce site est une <strong>proposition commerciale indépendante</strong> préparée par RealSpill pour présenter ce que
-          pourrait être le site de {site.name}. Il n&apos;a été ni commandé ni validé par l&apos;établissement, et il n&apos;est pas publié.
+          pourrait être le site de {site.name}. Il n&apos;a été ni commandé ni validé par l&apos;établissement : il est mis en ligne comme
+          démonstration uniquement, et ce n&apos;est pas le site officiel du restaurant.
         </p>
       </PageHeader>
       <div className="container-site space-y-10">
@@ -74,8 +75,12 @@ export default function MaquettePage() {
             <li>
               Menu : {items.length} plats d&apos;exemple, dont {demoItems} non confirmés ; aucun prix n&apos;a été inventé.
             </li>
-            <li>Galerie : {gallery.length} visuels générés, aucune photo de l&apos;établissement n&apos;est utilisée.</li>
+            <li>
+              Galerie : {gallery.length} illustrations dessinées pour la démonstration ; aucune photo de l&apos;établissement n&apos;est utilisée et
+              aucune image n&apos;est présentée comme une photo du restaurant.
+            </li>
             <li>Formulaires : fonctionnels pour la démonstration, mais aucune demande n&apos;est transmise ni enregistrée.</li>
+            <li>Composer ma table : la sélection n&apos;est qu&apos;un exemple joint à la demande ; elle ne vaut ni disponibilité ni prix.</li>
             <li>WhatsApp : aucun numéro n&apos;est relié tant que l&apos;établissement ne l&apos;a pas confirmé.</li>
             <li>Référencement : la maquette demande aux moteurs de recherche de ne pas l&apos;indexer.</li>
           </ul>

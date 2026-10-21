@@ -1,22 +1,21 @@
 import type { EventFormat, GalleryImage, Specialty } from "./types";
 
 /**
- * Visuels de démonstration générés (aucune photo du restaurant n'est utilisée).
- * Remplacez les fichiers de /public/images par les photos fournies et autorisées,
- * puis lancez `python3 scripts/images.py manifest public/images src/content/images.generated.json`.
+ * Visuels : des illustrations dessinées pour Chez Thia (components/Illustrations.tsx), jamais des photos du restaurant.
+ * Quand le restaurant fournit des photos autorisées, déposez-les dans /public/images, régénérez le manifeste
+ * (`python scripts/images.py manifest public/images src/content/images.generated.json`) puis ajoutez `file: "nom.webp"`
+ * à l'élément concerné : la photo remplace alors l'illustration.
  */
 export const gallery: GalleryImage[] = [
-  { file: "plat-1.webp", alt: "Visuel de démonstration d'un plat de fruits de mer", caption: "Fruits de mer (visuel de démonstration)", category: "plats" },
-  { file: "ambiance-1.webp", alt: "Visuel de démonstration d'une salle de restaurant", caption: "La salle (visuel de démonstration)", category: "ambiance" },
-  { file: "plat-2.webp", alt: "Visuel de démonstration d'un poisson braisé", caption: "Grillades (visuel de démonstration)", category: "plats" },
-  { file: "evenement-1.webp", alt: "Visuel de démonstration d'une table de fête", caption: "Repas de famille (visuel de démonstration)", category: "evenements" },
-  { file: "plat-3.webp", alt: "Visuel de démonstration d'une soupe", caption: "Soupe (visuel de démonstration)", category: "plats" },
-  { file: "ambiance-2.webp", alt: "Visuel de démonstration d'une terrasse", caption: "Terrasse (visuel de démonstration)", category: "ambiance" },
-  { file: "plat-4.webp", alt: "Visuel de démonstration d'accompagnements", caption: "Accompagnements (visuel de démonstration)", category: "plats" },
-  { file: "evenement-2.webp", alt: "Visuel de démonstration d'un repas d'entreprise", caption: "Repas d'entreprise (visuel de démonstration)", category: "evenements" },
+  { scene: "fruits-de-mer", alt: "Illustration d'un crabe et d'une crevette sur des vagues", caption: "Fruits de mer", category: "plats" },
+  { scene: "salle", alt: "Illustration d'une salle de restaurant avec une table dressée", caption: "La salle", category: "ambiance" },
+  { scene: "grillades", alt: "Illustration d'un poisson sur les flammes", caption: "Grillades", category: "plats" },
+  { scene: "famille", alt: "Illustration d'une table de famille avec des ballons", caption: "Repas de famille", category: "evenements" },
+  { scene: "soupe", alt: "Illustration d'un bol de soupe fumante", caption: "Soupe", category: "plats" },
+  { scene: "terrasse", alt: "Illustration d'une terrasse avec un parasol", caption: "Terrasse", category: "ambiance" },
+  { scene: "accompagnements", alt: "Illustration d'alloco et d'attiéké", caption: "Accompagnements", category: "plats" },
+  { scene: "entreprise", alt: "Illustration d'un repas d'équipe autour d'une table", caption: "Repas d'entreprise", category: "evenements" },
 ];
-
-export const heroImage = { file: "hero.webp", alt: "Visuel de démonstration d'une assiette de fruits de mer" };
 
 export const eventFormats: EventFormat[] = [
   { title: "Anniversaires", description: "Une table réservée et un menu à partager.", capacity: { value: "Capacité à confirmer", status: "demo" }, status: "demo" },
@@ -31,7 +30,7 @@ export const specialties: Specialty[] = [
     title: "Soupe bassamoise",
     description:
       "Spécialité mise en avant dans la fiche publique du restaurant. Le texte définitif (poissons utilisés, assaisonnement, histoire de la recette) sera rédigé avec Chez Thia.",
-    image: "specialite-soupe.webp",
+    scene: "soupe",
     status: "public",
     source: BAAB,
   },
@@ -39,7 +38,7 @@ export const specialties: Specialty[] = [
     title: "Fruits de mer",
     description:
       "Deuxième spécialité citée. Les plats proposés, leur disponibilité selon l'arrivage et leurs prix seront précisés par le restaurant.",
-    image: "specialite-fruits-de-mer.webp",
+    scene: "fruits-de-mer",
     status: "public",
     source: BAAB,
   },
@@ -47,7 +46,7 @@ export const specialties: Specialty[] = [
     title: "Grillades",
     description:
       "Troisième spécialité citée. Poissons et viandes à la braise : la sélection réelle et les accompagnements seront confirmés avec l'équipe.",
-    image: "specialite-grillades.webp",
+    scene: "grillades",
     status: "public",
     source: BAAB,
   },

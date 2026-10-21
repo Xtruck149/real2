@@ -41,6 +41,8 @@ export const site: SiteConfig = {
 export const copy = {
   heroEyebrow: "Restaurant · Angré · Abidjan",
   heroTitle: "La mer, la braise et le goût de Bassam.",
+  /** The same sentence cut into four painted lines (see components/Hero.tsx). */
+  heroLines: ["La mer,", "la braise", "et le goût", "de Bassam."] as const,
   heroText:
     "Fruits de mer, grillades et soupe bassamoise : une cuisine généreuse à partager à Angré. Consultez le menu, découvrez nos spécialités et réservez votre table en ligne.",
   heroLayout: "split" as "full" | "split",

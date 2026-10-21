@@ -123,23 +123,23 @@ for (const vp of VIEWPORTS) {
     await p.screenshot({ path: `${OUT}/${vp.name}${path === "/" ? "-accueil" : path.replace(/\//g, "-")}.png`, fullPage: true });
   }
 
-  // 3. Mobile menu.
-  if (vp.width < 1024) {
-    await p.goto(BASE + "/", { waitUntil: "networkidle" });
-    const toggle = p.locator('button[aria-controls="menu-mobile"]');
-    log(await toggle.isVisible(), `[${vp.name}] bouton du menu mobile visible`);
-    await toggle.click();
-    log((await toggle.getAttribute("aria-expanded")) === "true" && (await p.locator("#menu-mobile").isVisible()), `[${vp.name}] le menu s'ouvre`);
-    await p.keyboard.press("Escape");
-    log((await toggle.getAttribute("aria-expanded")) === "false" && !(await p.locator("#menu-mobile").isVisible()), `[${vp.name}] Échap ferme le menu`);
-    await toggle.click();
-    const target = p.locator("#menu-mobile a").nth(1);
-    const href = await target.getAttribute("href");
-    await target.click();
-    await p.waitForURL(BASE + href);
-    await p.locator("#menu-mobile").waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
-    log(!(await p.locator("#menu-mobile").isVisible()), `[${vp.name}] le menu se ferme après navigation vers ${href}`);
-  }
+  // 3. Floating dock: the one navigation, on every screen size.
+  await p.goto(BASE + "/", { waitUntil: "networkidle" });
+  const dock = p.locator('nav[aria-label="Navigation principale"]');
+  log(await dock.isVisible(), `[${vp.name}] le dock de navigation est visible`);
+  log((await dock.locator("a").count()) === 5, `[${vp.name}] le dock propose 5 destinations`);
+  log((await p.locator('button[aria-controls="menu-mobile"]').count()) === 0, `[${vp.name}] plus de menu hamburger`);
+  const dockBox = await dock.boundingBox();
+  const bodyPad = await p.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom));
+  log(!!dockBox && bodyPad >= dockBox.height, `[${vp.name}] le dock ne masque pas le bas de page (marge ${Math.round(bodyPad)}px ≥ ${Math.round(dockBox?.height ?? 0)}px)`);
+  const small = await dock.locator("a").evaluateAll((as) => as.filter((a) => { const r = a.getBoundingClientRect(); return r.height < 44 || r.width < 44; }).length);
+  log(small === 0, `[${vp.name}] chaque lien du dock mesure au moins 44 px`);
+  await dock.locator("a", { hasText: "Carte" }).click();
+  await p.waitForURL(BASE + "/menu");
+  log((await dock.locator('a[aria-current="page"]').innerText()).includes("Carte"), `[${vp.name}] le dock indique la page courante (aria-current)`);
+  await dock.locator("a", { hasText: "Réserver" }).click();
+  await p.waitForURL(BASE + "/reservation");
+  log((await dock.locator('a[aria-current="page"]').innerText()).includes("Réserver"), `[${vp.name}] le dock suit la navigation vers /reservation`);
   await c.close();
 }
 
@@ -175,6 +175,16 @@ for (const { path, kind } of formPages) {
   log(invalid > 0 && (await fp.locator(`${sel} [data-testid=error-summary]`).isVisible()), `[${kind}] envoi vide : ${invalid} champs signalés + récapitulatif`);
   log(await fp.evaluate(() => document.activeElement?.dataset?.testid === "error-summary"), `[${kind}] le focus va au récapitulatif d'erreurs`);
 
+  // "Composer ma table": ticking a dish must put it in the reservation payload (hidden field joined by the form attribute).
+  let sentPayload = null;
+  const onRequest = (req) => { if (req.url().includes("/api/demandes") && req.method() === "POST") sentPayload = req.postDataJSON(); };
+  fp.on("request", onRequest);
+  const chip = kind === "reservation" ? fp.locator("label", { hasText: "Soupe bassamoise" }).first() : null;
+  if (chip && (await chip.count())) {
+    await chip.click();
+    const summary = await fp.locator("[data-testid=composer-summary]").innerText();
+    log(summary.includes("Soupe bassamoise"), `[${kind}] Composer ma table : le plat coché apparaît dans « Ma table »`);
+  }
   await fp.route("**/api/demandes", (r) => r.fulfill({ status: 500, body: "{}" }));
   await fill(fp.locator(sel));
   await fp.locator(`${sel} button[type=submit]`).click();
@@ -188,6 +198,8 @@ for (const { path, kind } of formPages) {
   const success = fp.locator('[data-state="success"]');
   await success.waitFor({ timeout: 8000 }).catch(() => {});
   log(await success.isVisible(), `[${kind}] envoi valide : message de succès`);
+  fp.off("request", onRequest);
+  if (chip) log(!!sentPayload && String(sentPayload.selection ?? "").includes("Soupe bassamoise"), `[${kind}] Composer ma table : la sélection part avec la demande (${sentPayload?.selection ?? "absente"})`);
   if (demo) {
     const text = (await success.innerText()).replace(/\s+/g, " ");
     log(/rien n.a été envoyé/i.test(text) && !/bien partie|bien été transmis|bien été envoy/i.test(text), `[${kind}] démonstration : le message de succès n'affirme jamais qu'une demande est partie`);
@@ -225,7 +237,7 @@ log(okReq.status() === 200 && okBody.mode === "demo" && /^DEMO-/.test(okBody.ref
 
 // 5. WhatsApp in demo mode explains instead of opening a chat.
 await fp.goto(BASE + "/", { waitUntil: "networkidle" });
-await fp.locator('nav[aria-label="Actions rapides"] a', { hasText: "WhatsApp" }).click();
+await fp.locator("[data-testid=whatsapp]").click();
 log(await fp.locator("dialog[open]").isVisible(), "WhatsApp (démo) : fenêtre d'information au lieu d'un vrai numéro");
 await fc.close();
 await browser.close();

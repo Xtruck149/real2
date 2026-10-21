@@ -1,41 +1,30 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
+import { ICONS, Icon } from "./Illustrations";
 
 type Props = {
   whatsapp: string | null;
   whatsappMessage: string;
   tel: string | null;
-  cta: { href: string; label: string };
   name: string;
 };
 
 function WhatsAppIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
       <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z" />
     </svg>
   );
 }
 
-/** Line icons for the mobile bar: decorative, the visible label names each action. */
-function LineIcon({ d }: { d: string }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d={d} />
-    </svg>
-  );
-}
-const PHONE_PATH = "M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z";
-const TABLE_PATH = "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z";
+const FLOAT = "grid h-14 w-14 place-items-center rounded-full border-[2.5px] border-ink shadow-[3px_3px_0_var(--color-ink)] transition-transform hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none";
 
 /**
- * WhatsApp + call + main action. On phones they live in a bottom bar within thumb reach;
- * on larger screens WhatsApp becomes a floating button. Without a confirmed number, the
- * button explains the situation instead of opening a chat with anyone.
+ * Floating contact buttons above the dock. Without a confirmed WhatsApp number the button explains the
+ * situation instead of opening a chat with anyone. A call button appears only once a number is confirmed.
  */
-export function QuickActions({ whatsapp, whatsappMessage, tel, cta, name }: Props) {
+export function QuickActions({ whatsapp, whatsappMessage, tel, name }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const waHref = whatsapp ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(whatsappMessage)}` : null;
 
@@ -45,49 +34,28 @@ export function QuickActions({ whatsapp, whatsappMessage, tel, cta, name }: Prop
 
   return (
     <>
-      <a
-        {...whatsappProps}
-        data-testid="whatsapp"
-        aria-label={waHref ? "Écrire sur WhatsApp (nouvel onglet)" : "WhatsApp (non configuré dans la démonstration)"}
-        className="fixed bottom-6 right-6 z-30 hidden h-14 w-14 place-items-center rounded-full bg-[#25d366] text-[#0b2e17] shadow-lg shadow-black/40 transition hover:scale-105 md:grid"
-      >
-        <WhatsAppIcon />
-      </a>
-
-      <nav aria-label="Actions rapides" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 backdrop-blur md:hidden">
-        <ul className="grid grid-cols-3 gap-2 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2">
-          <li>
-            {tel ? (
-              <a href={tel} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold">
-                <LineIcon d={PHONE_PATH} />Appeler
-              </a>
-            ) : (
-              <Link href="/contact" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold">
-                <LineIcon d={PHONE_PATH} />Contact
-              </Link>
-            )}
-          </li>
-          <li>
-            <a {...whatsappProps} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold text-whatsapp">
-              <WhatsAppIcon />
-              WhatsApp
-            </a>
-          </li>
-          <li>
-            <Link href={cta.href} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl bg-accent text-xs font-bold text-accent-ink">
-              <LineIcon d={TABLE_PATH} />
-              {cta.label.split(" ")[0]}
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      <div className="fixed bottom-24 right-4 z-30 flex flex-col gap-3 md:bottom-28 md:right-6">
+        {tel ? (
+          <a href={tel} aria-label="Appeler le restaurant" className={`${FLOAT} bg-sun text-ink`}>
+            <Icon d={ICONS.phone} />
+          </a>
+        ) : null}
+        <a
+          {...whatsappProps}
+          data-testid="whatsapp"
+          aria-label={waHref ? "Écrire sur WhatsApp (nouvel onglet)" : "WhatsApp (non configuré dans la démonstration)"}
+          className={`${FLOAT} bg-[#25d366] text-[#0b2e17]`}
+        >
+          <WhatsAppIcon />
+        </a>
+      </div>
 
       <dialog
         ref={dialogRef}
         aria-labelledby="whatsapp-demo-title"
-        className="m-auto w-[min(92vw,28rem)] rounded-2xl border border-line bg-surface p-6 text-ink backdrop:bg-black/70"
+        className="m-auto w-[min(92vw,28rem)] rounded-2xl border-[3px] border-ink bg-surface p-6 text-ink shadow-[6px_6px_0_var(--color-ink)] backdrop:bg-ink/80"
       >
-        <h2 id="whatsapp-demo-title" className="text-2xl">WhatsApp — démonstration</h2>
+        <h2 id="whatsapp-demo-title" className="text-2xl">WhatsApp : démonstration</h2>
         <p className="mt-3 text-muted">
           Dans la version finale, ce bouton ouvrira une conversation WhatsApp avec {name}, avec un message pré-rempli. Le numéro
           sera configuré uniquement après validation par l&apos;établissement.

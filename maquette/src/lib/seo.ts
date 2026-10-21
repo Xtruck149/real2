@@ -31,8 +31,7 @@ export function organizationJsonLd() {
     name: site.name,
     description: site.description,
     url: siteUrl,
-    // The shipped visuals are illustrations: they are advertised as the restaurant's image only once real photos replace them.
-    image: isDemo ? undefined : `${siteUrl}/images/hero.webp`,
+    // The shipped visuals are illustrations, never advertised as the restaurant's image: add `image` once an authorised photo exists.
     address: {
       "@type": "PostalAddress",
       // A "public" address is a lead from a directory, not a confirmed fact: only confirmed values are published.

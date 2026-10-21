@@ -102,7 +102,7 @@ export function FormShell({ kind, title, submitLabel, successTitle, successText,
 
   return (
     <ErrorsContext.Provider value={errors}>
-      <form noValidate onSubmit={onSubmit} data-form={kind} data-state={state} aria-labelledby={`${kind}-title`} className="card relative p-5 sm:p-8">
+      <form noValidate id={`form-${kind}`} onSubmit={onSubmit} data-form={kind} data-state={state} aria-labelledby={`${kind}-title`} className="card relative p-5 sm:p-8">
         <h3 id={`${kind}-title`} className="text-2xl sm:text-3xl">
           {title}
         </h3>

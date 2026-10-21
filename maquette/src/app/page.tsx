@@ -1,192 +1,231 @@
 import Link from "next/link";
-import { DemoImage } from "@/components/DemoImage";
+import type { CSSProperties, ReactNode } from "react";
+import { Appear } from "@/components/Appear";
 import { FactBadge, FactText } from "@/components/FactBadge";
 import { Hero } from "@/components/Hero";
-import { eventFormats, gallery, specialties } from "@/content/gallery";
+import { Bowl, Crab, Flame, ICONS, Icon } from "@/components/Illustrations";
+import { Marquee } from "@/components/Marquee";
+import { Visual } from "@/components/Visual";
+import { gallery, specialties } from "@/content/gallery";
 import { menu } from "@/content/menu";
-import { copy, site } from "@/content/site";
-import { Appear } from "@/components/Appear";
-import { Ribbon } from "@/components/Ribbon";
-import { Wave } from "@/components/Wave";
+import { site } from "@/content/site";
 
-/** Line icons for the three highlights (shell, flame, bowl): decorative only. */
-const HIGHLIGHT_ICONS = [
-  "M12 3c-4 0-8 3.5-8 8 0 3 2 5 4 5l1 4h6l1-4c2 0 4-2 4-5 0-4.500-4-8-8-8ZM12 3v13M8 5l2 11M16 5l-2 11",
-  "M12 3c1 3 4 4.500 4 8a4 4 0 0 1-8 0c0-1.500.5-2.500 1.500-3.500C9.500 9 10 7 12 3ZM9 18h6M10 21h4",
-  "M3 11h18a0 0 0 0 1 0 0 9 9 0 0 1-9 9 9 9 0 0 1-9-9ZM8 7c0-1.500 1-1.500 1-3M12 7c0-1.500 1-1.500 1-3M16 7c0-1.500 1-1.500 1-3",
+/** A drawn piece in a round sticker. Decorative. */
+function Sticker({ children, bg }: { children: ReactNode; bg: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="-110 -110 220 220" className="h-28 w-28 rounded-full border-[3px] border-ink" style={{ background: bg }}>
+      {children}
+    </svg>
+  );
+}
+
+const STEPS = [
+  { n: "01", title: "La mer", text: "Soupe, crabe, crevettes : choisissez ce qui vous fait envie.", bg: "bg-sun", ink: "text-ink", art: <Sticker bg="#0A6670"><Crab s={0.85} /></Sticker> },
+  { n: "02", title: "La braise", text: "Poisson, poulet, brochettes : ajoutez une grillade.", bg: "bg-surface", ink: "text-ink", art: <Sticker bg="#FFC21A"><Flame s={0.95} /></Sticker> },
+  { n: "03", title: "La table", text: "Accompagnements, boissons, puis votre jour et votre heure.", bg: "bg-coral", ink: "text-white", art: <Sticker bg="#FFE3A0"><Bowl s={0.85} /></Sticker> },
+];
+
+const CARD_TONE = [
+  { bg: "bg-lagoon", text: "text-white", muted: "text-white" },
+  { bg: "bg-sun", text: "text-ink", muted: "text-ink" },
+  { bg: "bg-coral", text: "text-white", muted: "text-white" },
 ];
 
 export default function HomePage() {
   const c = site.contact;
-  const featured = menu.flatMap((cat) => cat.items.map((item) => ({ ...item, category: cat.name }))).slice(0, 4);
+  const featured = menu.flatMap((cat) => cat.items.map((item) => ({ ...item, category: cat.name }))).slice(0, 5);
+  const price = (n: number | null) => (n ? `${n.toLocaleString("fr-FR")} F` : "Prix à confirmer");
 
   return (
     <>
       <Hero />
-      <Ribbon />
+      <Marquee />
 
-      <section aria-labelledby="intro-title" className="container-site py-20 md:py-28">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-end">
+      {/* 1 — The signature tool: build a table in three gestes */}
+      <section aria-labelledby="compose-title" className="container-site py-16 md:py-24">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <div>
-            <p className="eyebrow">Bienvenue</p>
-            <h2 id="intro-title" className="mt-3 text-4xl md:text-5xl">
-              {copy.introTitle}
+            <p className="eyebrow">Composer ma table</p>
+            <h2 id="compose-title" className="mt-5 text-4xl sm:text-5xl md:text-6xl">
+              Votre table, en trois gestes.
             </h2>
           </div>
-          <p className="text-lg text-muted">{copy.introText}</p>
+          <div>
+            <p className="max-w-xl text-lg text-muted">
+              Cochez ce qui vous tente : votre sélection s&apos;ajoute à votre demande de réservation. Les plats proposés sont des
+              exemples, le restaurant confirmera ce qui est disponible.
+            </p>
+            <Link href="/reservation#composer" className="btn btn-ink mt-6">
+              Composer ma table
+              <Icon d={ICONS.arrow} className="h-5 w-5" />
+            </Link>
+          </div>
         </div>
-        <ul className="mt-12 grid gap-4 md:grid-cols-3">
-          {copy.highlights.map((h, i) => (
-            <Appear as="li" key={h.title} delay={i * 110} className="card p-6 md:p-8">
-              <div className="flex items-start justify-between">
-                <span aria-hidden="true" className="font-display text-5xl text-accent">
-                  0{i + 1}
+        <ol className="mt-12 grid gap-6 md:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <Appear as="li" key={s.n} delay={i * 110} className={`card ${s.bg} ${s.ink} flex flex-col gap-5 p-6 md:p-8 ${i === 1 ? "md:translate-y-6" : ""}`}>
+              <div className="flex items-start justify-between gap-4">
+                <span aria-hidden="true" className="font-display text-6xl leading-none">
+                  {s.n}
                 </span>
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-8 w-8 text-highlight" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d={HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length]} />
-                </svg>
+                {s.art}
               </div>
-              <h3 className="mt-4 text-2xl">{h.title}</h3>
-              <p className="mt-2 text-muted">{h.text}</p>
+              <div>
+                <h3 className="text-3xl">{s.title}</h3>
+                <p className="mt-2 font-medium">{s.text}</p>
+              </div>
             </Appear>
           ))}
-        </ul>
+        </ol>
       </section>
 
+      {/* 2 — The three specialities, as posters that stack while scrolling */}
       {specialties.length > 0 ? (
-        <>
-        <Wave className="text-surface" flip />
-        <section aria-labelledby="spec-title" className="bg-surface py-14 md:py-20">
+        <section aria-labelledby="spec-title" className="bg-surface-2 py-16 md:py-24">
           <div className="container-site">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
                 <p className="eyebrow">Nos spécialités</p>
-                <h2 id="spec-title" className="mt-3 text-4xl md:text-5xl">
-                  Ce qui fait notre réputation
+                <h2 id="spec-title" className="mt-5 text-4xl sm:text-5xl md:text-6xl">
+                  Trois affiches, trois envies.
                 </h2>
               </div>
               <Link href="/specialites" className="btn btn-ghost">
                 Toutes les spécialités
               </Link>
             </div>
-            <ul className="mt-10 grid gap-5 md:grid-cols-3">
-              {specialties.map((s, i) => (
-                <Appear as="li" key={s.title} delay={i * 110} className="card overflow-hidden !bg-bg">
-                  <div className="zoom-img overflow-hidden">
-                    <DemoImage file={s.image} alt={`Visuel de démonstration : ${s.title}`} sizes="(min-width: 768px) 33vw, 100vw" className="aspect-[4/3] w-full object-cover" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-2xl">
-                      {s.title}
-                      <FactBadge status={s.status} source={s.source} />
-                    </h3>
-                    <p className="mt-2 text-muted">{s.description}</p>
-                  </div>
-                </Appear>
-              ))}
+            <ul className="mt-12 space-y-8">
+              {specialties.map((s, i) => {
+                const tone = CARD_TONE[i % CARD_TONE.length];
+                return (
+                  <li
+                    key={s.title}
+                    className={`stack-card hard grid items-center gap-6 rounded-[2rem] border-[3px] border-ink p-5 md:grid-cols-[1fr_1.1fr] md:gap-10 md:p-8 ${tone.bg} ${tone.text}`}
+                    style={{ "--stack-top": `${5.5 + i * 1.2}rem` } as CSSProperties}
+                  >
+                    <Visual scene={s.scene} file={s.file} alt={`Illustration : ${s.title}`} className="rounded-2xl border-[3px] border-ink" />
+                    <div className="min-w-0">
+                      <p className="font-display text-6xl leading-none opacity-90 md:text-7xl" aria-hidden="true">
+                        0{i + 1}
+                      </p>
+                      <h3 className="mt-3 text-3xl [overflow-wrap:anywhere] md:text-4xl lg:text-5xl">
+                        {s.title}
+                      </h3>
+                      <p className="mt-3">
+                        <FactBadge status={s.status} source={s.source} />
+                      </p>
+                      <p className={`mt-4 max-w-lg text-lg ${tone.muted}`}>{s.description}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </section>
-        <Wave className="text-surface" />
-        </>
       ) : null}
 
+      {/* 3 — The chalkboard */}
       <section aria-labelledby="menu-title" className="container-site py-20 md:py-28">
-        <div className="grid gap-12 lg:grid-cols-2">
-          <Appear className="zoom-img relative overflow-hidden rounded-[var(--radius-card)] shadow-[0_30px_60px_-34px_rgb(14_74_96/0.55)]">
-            <DemoImage file={gallery[0].file} alt={gallery[0].alt} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full object-cover" />
-          </Appear>
-          <Appear delay={120} className="flex flex-col justify-center">
-            <p className="eyebrow">À la carte</p>
-            <h2 id="menu-title" className="mt-3 text-4xl md:text-5xl">
-              Un aperçu du menu
+        <div className="chalkboard mx-auto max-w-4xl p-6 sm:p-10">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 id="menu-title" className="chalk text-5xl font-normal sm:text-6xl">
+              L&apos;ardoise du jour
             </h2>
-            <span className="rule-wave" aria-hidden="true" />
-            <ul className="mt-8 divide-y divide-line border-y border-line">
-              {featured.map((item) => (
-                <li key={item.name} className="flex items-baseline justify-between gap-4 py-4">
-                  <span>
-                    <span className="font-display text-xl">{item.name}</span>
-                    <FactBadge status={item.status} />
-                    <span className="block text-sm text-muted">{item.category}</span>
-                  </span>
-                  <span className={`tabular shrink-0 text-sm ${item.price ? "text-muted" : "pending"}`}>{item.price ? `${item.price.toLocaleString("fr-FR")} F` : "Prix à confirmer"}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/menu" className="btn btn-primary mt-8 self-start">
-              Voir tout le menu
-            </Link>
-          </Appear>
-        </div>
-      </section>
-
-      {eventFormats.length > 0 ? (
-        <section aria-labelledby="events-title" className="border-y border-line bg-surface py-20 md:py-28">
-          <div className="container-site grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-            <div>
-              <p className="eyebrow">Événements</p>
-              <h2 id="events-title" className="mt-3 text-4xl md:text-5xl">
-                Votre soirée, organisée avec l&apos;équipe
-              </h2>
-              <p className="mt-4 max-w-xl text-lg text-muted">
-                {eventFormats.map((e) => e.title.toLowerCase()).join(", ")} : décrivez votre projet, l&apos;équipe vous recontacte.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3 lg:justify-end">
-              <Link href={copy.reservationIncludesEvents ? "/reservation#evenement" : "/evenements"} className="btn btn-primary">
-                Organiser un événement
-              </Link>
-            </div>
+            <p className="chalk text-xl text-sun">exemples de plats</p>
           </div>
-        </section>
-      ) : null}
-
-      <section aria-labelledby="gallery-title" className="container-site py-20 md:py-28">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <h2 id="gallery-title" className="text-4xl md:text-5xl">
-            En images
-          </h2>
-          <Link href="/galerie" className="btn btn-ghost">
-            Ouvrir la galerie
+          <ul className="mt-8 space-y-5">
+            {featured.map((item) => (
+              <li key={item.name} className="sm:flex sm:items-end sm:gap-3">
+                <span className="block min-w-0">
+                  <span className="chalk text-2xl sm:text-3xl">{item.name}</span>
+                  <FactBadge status={item.status} />
+                  <span className="block text-sm text-chalk/80">{item.category}</span>
+                </span>
+                <span aria-hidden="true" className="leader hidden sm:block" />
+                <span className="chalk mt-1 block text-lg italic text-chalk/90 sm:mt-0 sm:shrink-0 sm:text-xl">{price(item.price)}</span>
+              </li>
+            ))}
+          </ul>
+          <Link href="/menu" className="btn btn-primary mt-10">
+            Voir toute l&apos;ardoise
           </Link>
         </div>
-        <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-          {gallery.slice(1, 4).map((img, i) => (
-            <li key={img.file} className={`zoom-img relative aspect-square overflow-hidden rounded-[var(--radius-card)] ${i === 0 ? "col-span-2 aspect-[2/1] md:col-span-1 md:aspect-square" : ""}`}>
-              <DemoImage file={img.file} alt={img.alt} fill sizes="(min-width: 768px) 33vw, 50vw" className="object-cover" />
-            </li>
-          ))}
-        </ul>
       </section>
 
-      <section aria-labelledby="info-title" className="container-site">
-        <div className="card grid gap-8 p-6 md:grid-cols-3 md:p-10">
-          <h2 id="info-title" className="text-3xl md:text-4xl">
-            Infos pratiques
-          </h2>
-          <div>
-            <h3 className="font-body text-sm font-bold uppercase tracking-widest text-muted">Adresse</h3>
-            <p className="mt-2">
-              <FactText fact={c.address} />
-            </p>
-          </div>
-          <div>
-            <h3 className="font-body text-sm font-bold uppercase tracking-widest text-muted">
-              Horaires
-              <FactBadge status={c.hours.status} source={c.hours.source} />
-            </h3>
-            <ul className="mt-2">
-              {c.hours.rows.map((r) => (
-                <li key={r.days}>
-                  {r.days} : {r.hours}
-                </li>
-              ))}
-            </ul>
-            <Link href="/contact" className="mt-4 inline-block font-semibold text-accent underline underline-offset-4">
-              Contact et itinéraire
+      {/* 4 — A loose collage */}
+      <section aria-labelledby="gallery-title" className="overflow-x-clip bg-lagoon py-16 text-white md:py-24">
+        <div className="container-site">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2 id="gallery-title" className="text-4xl sm:text-5xl md:text-6xl">
+              En images
+            </h2>
+            <Link href="/galerie" className="btn btn-primary">
+              Ouvrir la galerie
             </Link>
           </div>
+          <ul className="mt-12 grid gap-8 sm:grid-cols-3">
+            {gallery.slice(0, 3).map((img, i) => (
+              <Appear as="li" key={img.scene} delay={i * 110} className={`hard zoom-art overflow-hidden rounded-2xl border-[3px] border-ink bg-surface ${["-rotate-2", "rotate-1 sm:translate-y-6", "-rotate-1"][i]}`}>
+                <Visual scene={img.scene} file={img.file} alt={img.alt} sizes="(min-width: 640px) 33vw, 100vw" />
+                <p className="border-t-[3px] border-ink px-4 py-3 font-display text-lg text-ink">{img.caption}</p>
+              </Appear>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 5 — Practical information as a till receipt */}
+      <section aria-labelledby="info-title" className="container-site py-20 md:py-28">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <Appear className="ticket mx-auto w-full max-w-md rotate-1 p-6 font-mono text-[0.95rem] sm:p-8">
+            <p className="text-center font-display text-3xl">{site.name}</p>
+            <p className="text-center text-sm text-muted">Ticket de démonstration</p>
+            <hr className="my-4 border-t-[3px] border-dashed border-ink" />
+            <h2 id="info-title" className="sr-only">
+              Infos pratiques
+            </h2>
+            <dl className="space-y-4">
+              <div>
+                <dt className="font-bold uppercase tracking-wider">Adresse</dt>
+                <dd className="mt-1">
+                  <FactText fact={c.address} />
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold uppercase tracking-wider">Horaires</dt>
+                <dd className="mt-1">
+                  {c.hours.rows.map((r) => (
+                    <span key={r.days} className="block">
+                      {r.days} : {r.hours}
+                    </span>
+                  ))}
+                  <FactBadge status={c.hours.status} source={c.hours.source} />
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold uppercase tracking-wider">Téléphone</dt>
+                <dd className="mt-1">{c.phone ? <FactText fact={c.phone} /> : "Non communiqué"}</dd>
+              </div>
+            </dl>
+            <hr className="my-4 border-t-[3px] border-dashed border-ink" />
+            <p className="text-center text-sm">Merci de votre visite ★</p>
+          </Appear>
+          <Appear delay={120}>
+            <p className="eyebrow">Venir nous voir</p>
+            <h2 className="mt-5 text-4xl sm:text-5xl md:text-6xl">On vous garde une place.</h2>
+            <p className="mt-5 max-w-lg text-lg text-muted">
+              Demandez une table, composez-la, et retrouvez l&apos;itinéraire dans la page contact. Rien n&apos;est définitif avant la
+              confirmation du restaurant.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link href={site.primaryCta.href} className="btn btn-primary">
+                {site.primaryCta.label}
+              </Link>
+              <Link href="/contact" className="btn btn-ghost">
+                Contact et itinéraire
+              </Link>
+            </div>
+          </Appear>
         </div>
       </section>
     </>

@@ -1,11 +1,42 @@
 import Link from "next/link";
 import { FactBadge, FactText } from "@/components/FactBadge";
+import { C, ICONS, Icon } from "@/components/Illustrations";
 import { PageHeader } from "@/components/PageHeader";
 import { site } from "@/content/site";
 import { telHref } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("Contact & accès", `Adresse, horaires et itinéraire pour venir chez ${site.name}, ${site.district}, ${site.locality}.`, "/contact");
+
+const DT = "text-sm font-extrabold uppercase tracking-widest";
+
+/** Hand-drawn neighbourhood sketch. It is an illustration, not a geolocated map: the exact position is still to be confirmed. */
+function SketchMap() {
+  return (
+    <svg viewBox="0 0 400 300" className="block h-full w-full" role="img" aria-label="Plan dessiné du quartier : illustration, position exacte à confirmer" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="300" fill={C.sand} />
+      <path d="M-10 210 Q120 150 230 190 T420 120 V320 H-10Z" fill={C.lagoon} stroke={C.ink} strokeWidth="4" />
+      <path d="M0 60 H400 M0 140 H260 M90 0 V300 M250 0 V210 M330 70 V300" stroke={C.paper} strokeWidth="18" strokeLinecap="round" />
+      <path d="M0 60 H400 M0 140 H260 M90 0 V300 M250 0 V210 M330 70 V300" stroke={C.ink} strokeWidth="3" strokeDasharray="10 12" strokeLinecap="round" />
+      {[
+        [130, 20, 52, 28],
+        [130, 92, 56, 30],
+        [18, 92, 54, 30],
+        [280, 20, 40, 30],
+        [276, 150, 44, 30],
+        [352, 90, 38, 36],
+      ].map(([x, y, w, h], i) => (
+        <rect key={i} x={x} y={y} width={w} height={h} rx="6" fill={i % 2 ? C.paper : C.cream} stroke={C.ink} strokeWidth="3" />
+      ))}
+      <g transform="translate(170 110)">
+        <g className="bob">
+          <path d="M0 0 C-26 -34 -22 -62 0 -62 C22 -62 26 -34 0 0Z" fill={C.coral} stroke={C.ink} strokeWidth="4" strokeLinejoin="round" />
+          <circle cy="-40" r="9" fill={C.sun} stroke={C.ink} strokeWidth="3" />
+        </g>
+      </g>
+    </svg>
+  );
+}
 
 export default function ContactPage() {
   const c = site.contact;
@@ -15,14 +46,15 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader eyebrow="Contact" title="Nous trouver, nous joindre" />
-      <div className="container-site grid gap-6 lg:grid-cols-2">
-        <section aria-labelledby="coord-title" className="card p-6 md:p-10">
-          <h2 id="coord-title" className="text-3xl">
+      <div className="container-site grid gap-12 lg:grid-cols-2 lg:items-start">
+        <section aria-labelledby="coord-title" className="ticket mb-5 rotate-[-0.6deg] p-6 font-mono md:p-9">
+          <h2 id="coord-title" className="font-display text-3xl">
             Coordonnées
           </h2>
-          <dl className="mt-6 space-y-6">
+          <hr className="my-4 border-t-[3px] border-dashed border-ink" />
+          <dl className="space-y-6">
             <div>
-              <dt className="text-sm font-bold uppercase tracking-widest text-muted">Adresse</dt>
+              <dt className={DT}>Adresse</dt>
               <dd className="mt-1 text-lg">
                 <address className="not-italic">
                   <FactText fact={c.address} />
@@ -30,21 +62,21 @@ export default function ContactPage() {
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-bold uppercase tracking-widest text-muted">Téléphone</dt>
+              <dt className={DT}>Téléphone</dt>
               <dd className="mt-1 text-lg">
                 {c.phone && tel ? <a href={tel} className="underline underline-offset-4">{c.phone.value}</a> : c.phone ? <FactText fact={c.phone} /> : "Non communiqué"}
               </dd>
             </div>
             {c.email ? (
               <div>
-                <dt className="text-sm font-bold uppercase tracking-widest text-muted">E-mail</dt>
+                <dt className={DT}>E-mail</dt>
                 <dd className="mt-1 text-lg">
                   {c.email.status === "confirme" ? <a href={`mailto:${c.email.value}`} className="underline underline-offset-4">{c.email.value}</a> : <FactText fact={c.email} />}
                 </dd>
               </div>
             ) : null}
             <div>
-              <dt className="text-sm font-bold uppercase tracking-widest text-muted">
+              <dt className={DT}>
                 Horaires
                 <FactBadge status={c.hours.status} source={c.hours.source} />
               </dt>
@@ -60,37 +92,39 @@ export default function ContactPage() {
               </dd>
             </div>
           </dl>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href={maps} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+          <hr className="my-6 border-t-[3px] border-dashed border-ink" />
+          <div className="flex flex-wrap gap-3 font-body">
+            <a href={maps} target="_blank" rel="noopener noreferrer" className="btn btn-ink">
+              <Icon d={ICONS.pin} className="h-5 w-5" />
               Itinéraire Google Maps<span className="sr-only"> (nouvel onglet)</span>
             </a>
-            <Link href={site.primaryCta.href} className="btn btn-ghost">
+            <Link href={site.primaryCta.href} className="btn btn-primary">
               {site.primaryCta.label}
             </Link>
           </div>
         </section>
 
-        <section aria-labelledby="map-title" className="card relative flex min-h-80 flex-col justify-end overflow-hidden p-6 md:p-10">
-          <div aria-hidden="true" className="absolute inset-0 opacity-40 [background-image:linear-gradient(var(--color-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-line)_1px,transparent_1px)] [background-size:36px_36px]" />
-          <div aria-hidden="true" className="absolute left-1/2 top-1/3 grid h-14 w-14 -translate-x-1/2 place-items-center rounded-full bg-accent text-2xl text-accent-ink shadow-lg">
-            ●
+        <section aria-labelledby="map-title" className="space-y-5">
+          <div className="hard sticker-tilt-r aspect-[4/3] overflow-hidden rounded-[2rem] border-[3px] border-ink">
+            <SketchMap />
           </div>
-          <div className="relative">
-            <h2 id="map-title" className="text-2xl">
+          <div>
+            <h2 id="map-title" className="text-3xl">
               {site.district}, {site.locality}
             </h2>
             <p className="mt-2 text-muted">
-              Carte statique légère : pas de module tiers chargé tant que le visiteur n&apos;ouvre pas l&apos;itinéraire. L&apos;emplacement exact sera vérifié avec l&apos;établissement.
+              Plan dessiné pour la démonstration, sans module tiers : rien n&apos;est chargé tant que le visiteur n&apos;ouvre pas l&apos;itinéraire.
+              L&apos;emplacement exact sera vérifié avec l&apos;établissement.
             </p>
           </div>
         </section>
 
-        <section aria-labelledby="social-title" className="card p-6 md:p-10 lg:col-span-2">
-          <h2 id="social-title" className="text-2xl">
+        <section aria-labelledby="social-title" className="card bg-sun p-6 md:p-10 lg:col-span-2">
+          <h2 id="social-title" className="text-3xl">
             Réseaux sociaux
           </h2>
-          <ul className="mt-4 flex flex-wrap gap-3">
-            {site.social.length === 0 ? <li className="text-muted">Liens officiels à confirmer avec l&apos;établissement.</li> : null}
+          <ul className="mt-4 flex flex-wrap items-center gap-3">
+            {site.social.length === 0 ? <li>Liens officiels à confirmer avec l&apos;établissement.</li> : null}
             {site.social.map((s) => (
               <li key={s.url} className="flex items-center">
                 <a href={s.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost min-h-11 text-sm">
