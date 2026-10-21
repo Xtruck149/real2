@@ -19,7 +19,7 @@ export default function SpecialitesPage() {
       <div className="container-site space-y-20">
         {specialties.map((s, i) => (
           <section key={s.title} aria-labelledby={`spec-${i}`} className="grid items-center gap-8 md:grid-cols-2 md:gap-14">
-            <div className={`overflow-hidden rounded-[var(--radius-card)] ${i % 2 ? "md:order-2" : ""}`}>
+            <div className={`zoom-img overflow-hidden rounded-[var(--radius-card)] shadow-[0_30px_60px_-34px_rgb(14_74_96/0.5)] ${i % 2 ? "md:order-2" : ""}`}>
               <DemoImage file={s.image} alt={`Visuel de démonstration : ${s.title}`} sizes="(min-width: 768px) 50vw, 100vw" className="aspect-[4/3] w-full object-cover" />
             </div>
             <div>

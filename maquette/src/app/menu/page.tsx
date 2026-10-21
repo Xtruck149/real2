@@ -63,7 +63,7 @@ export default function MenuPage() {
                       </ul>
                     ) : null}
                   </div>
-                  <p className="shrink-0 text-right text-sm font-semibold text-accent">{price(item.price)}</p>
+                  <p className={`tabular shrink-0 text-right text-sm ${item.price === null ? "pending" : "font-semibold text-accent"}`}>{price(item.price)}</p>
                 </li>
               ))}
             </ul>

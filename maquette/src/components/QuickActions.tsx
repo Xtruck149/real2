@@ -19,6 +19,17 @@ function WhatsAppIcon() {
   );
 }
 
+/** Line icons for the mobile bar: decorative, the visible label names each action. */
+function LineIcon({ d }: { d: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} />
+    </svg>
+  );
+}
+const PHONE_PATH = "M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z";
+const TABLE_PATH = "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z";
+
 /**
  * WhatsApp + call + main action. On phones they live in a bottom bar within thumb reach;
  * on larger screens WhatsApp becomes a floating button. Without a confirmed number, the
@@ -47,24 +58,24 @@ export function QuickActions({ whatsapp, whatsappMessage, tel, cta, name }: Prop
         <ul className="grid grid-cols-3 gap-2 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2">
           <li>
             {tel ? (
-              <a href={tel} className="flex min-h-12 flex-col items-center justify-center rounded-xl text-xs font-semibold">
-                <span aria-hidden="true">✆</span>Appeler
+              <a href={tel} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold">
+                <LineIcon d={PHONE_PATH} />Appeler
               </a>
             ) : (
-              <Link href="/contact" className="flex min-h-12 flex-col items-center justify-center rounded-xl text-xs font-semibold">
-                <span aria-hidden="true">✆</span>Contact
+              <Link href="/contact" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold">
+                <LineIcon d={PHONE_PATH} />Contact
               </Link>
             )}
           </li>
           <li>
-            <a {...whatsappProps} className="flex min-h-12 flex-col items-center justify-center rounded-xl text-xs font-semibold text-whatsapp">
+            <a {...whatsappProps} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold text-whatsapp">
               <WhatsAppIcon />
               WhatsApp
             </a>
           </li>
           <li>
-            <Link href={cta.href} className="flex min-h-12 flex-col items-center justify-center rounded-xl bg-accent text-xs font-bold text-accent-ink">
-              <span aria-hidden="true">★</span>
+            <Link href={cta.href} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl bg-accent text-xs font-bold text-accent-ink">
+              <LineIcon d={TABLE_PATH} />
               {cta.label.split(" ")[0]}
             </Link>
           </li>

@@ -15,8 +15,11 @@ function Actions() {
           Découvrir le menu
         </Link>
       </div>
-      <p className="mt-8 text-sm text-muted">
-        <span aria-hidden="true">📍 </span>
+      <p className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-highlight" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z" />
+          <circle cx="12" cy="9.5" r="2.5" />
+        </svg>
         <FactText fact={site.contact.address} />
       </p>
     </>
@@ -33,20 +36,27 @@ const DemoLabel = () => (
 export function Hero() {
   if (copy.heroLayout === "split") {
     return (
-      <section aria-labelledby="hero-title" className="container-site grid items-center overflow-x-clip gap-10 pb-16 pt-10 md:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-24">
-        <div>
-          <p className="eyebrow">{copy.heroEyebrow}</p>
-          <h1 id="hero-title" className="mt-4 text-5xl sm:text-6xl md:text-7xl">
-            {copy.heroTitle}
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted">{copy.heroText}</p>
-          <Actions />
-        </div>
-        <div className="relative">
-          <div aria-hidden="true" className="absolute -inset-3 -z-10 rotate-2 rounded-[2rem] bg-surface-2 md:-inset-5" />
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] sm:aspect-[4/3] lg:aspect-[4/5]">
-            <DemoImage file={heroImage.file} alt={heroImage.alt} sizes="(min-width: 1024px) 50vw, 100vw" priority fill className="object-cover" />
-            <DemoLabel />
+      <section aria-labelledby="hero-title" className="sand overflow-x-clip">
+        <div className="container-site grid items-center gap-10 pb-16 pt-10 md:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-24">
+          <div>
+            <p className="eyebrow">{copy.heroEyebrow}</p>
+            <h1 id="hero-title" className="mt-4 text-5xl sm:text-6xl md:text-7xl">
+              {copy.heroTitle}
+            </h1>
+            <span className="rule-wave" aria-hidden="true" />
+            <p className="mt-6 max-w-xl text-lg text-muted">{copy.heroText}</p>
+            <Actions />
+          </div>
+          <div className="relative">
+            <div aria-hidden="true" className="drift absolute -inset-3 -z-10 rounded-[2rem] bg-surface-2 md:-inset-5" />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[0_30px_60px_-30px_rgb(14_74_96/0.55)] sm:aspect-[4/3] lg:aspect-[4/5]">
+              <DemoImage file={heroImage.file} alt={heroImage.alt} sizes="(min-width: 1024px) 50vw, 100vw" priority fill className="object-cover" />
+              <DemoLabel />
+            </div>
+            <p className="absolute -bottom-4 left-4 rounded-full border border-line bg-surface px-4 py-2 text-xs font-semibold text-accent shadow-md sm:left-8">
+              Soupe · Fruits de mer · Grillades
+              <span className="ml-2 font-normal text-muted">citées par une source publique</span>
+            </p>
           </div>
         </div>
       </section>
